@@ -44,8 +44,13 @@ function generate_monero_subaddress_callback() {
         'jsonrpc' => '2.0',
         'id' => '0',
         'method' => 'create_address',
-        'params' => [],
+        'params' => [
+            'count' => 1, // Adjust the count as needed
+        ],
     ]);
+
+    // Log the request for debugging
+    error_log('Monero RPC Request: ' . $request_body);
 
     $response = wp_remote_post($rpc_url, [
         'body' => $request_body,
@@ -55,10 +60,14 @@ function generate_monero_subaddress_callback() {
     ]);
 
     if (is_wp_error($response)) {
-        echo 'Error generating Monero subaddress: ' . $response->get_error_message();
+        // Log the error for debugging
+        error_log('Error generating Monero subaddress: ' . $response->get_error_message());
+        echo 'Error generating Monero subaddress';
     } else {
         $body = wp_remote_retrieve_body($response);
-        error_log('Monero RPC Response: ' . $body); // Log the complete response
+
+        // Log the response for debugging
+        error_log('Monero RPC Response: ' . $body);
 
         $result = json_decode($body, true);
 
