@@ -38,6 +38,9 @@ function generate_monero_subaddress() {
 }
 
 function generate_monero_subaddress_callback() {
+    // Log the start of subaddress generation
+    error_log('Generating Monero subaddress...');
+
     $rpc_url = 'http://127.0.0.1:18080/json_rpc'; // Replace with your Monero RPC URL
 
     $request_body = json_encode([
@@ -55,14 +58,20 @@ function generate_monero_subaddress_callback() {
     ]);
 
     if (is_wp_error($response)) {
+        // Log the error
+        error_log('Error generating Monero subaddress: ' . $response->get_error_message());
         echo 'Error generating Monero subaddress';
     } else {
         $body = wp_remote_retrieve_body($response);
         $result = json_decode($body, true);
 
         if (isset($result['result']['address'])) {
+            // Log the successful subaddress generation
+            error_log('Generated Monero subaddress: ' . $result['result']['address']);
             echo $result['result']['address'];
         } else {
+            // Log the error
+            error_log('Error generating Monero subaddress: Unexpected response format');
             echo 'Error generating Monero subaddress';
         }
     }
